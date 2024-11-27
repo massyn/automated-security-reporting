@@ -1,0 +1,12 @@
+python-dotenv
+pyyaml
+duckdb
+psycopg2-binary
+crowdstrike-falconpy
+pytenable
+requests
+pandas
+Jinja2
+okta
+duckdb
+boto3

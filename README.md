@@ -52,3 +52,21 @@ graph LR
     classDef dim fill:#f9c6c9,stroke:#000,stroke-width:2px,color:#000;
     classDef calc fill:#c6d8f9,stroke:#000,stroke-width:2px,color:#000;
 ```
+
+## Architecture
+
+* [Data Model](00-docs/data-model.md)
+
+## Collectors
+
+* [How to](00-docs/how-to-run-an-extraction.md) run an extraction
+* [Writing](00-docs/writing-a-collector.md) your own collector
+* [List](00-docs/collectors.md) of collectors that can be used
+
+## Metrics
+
+TODO
+
+## Dashboard
+
+TODO
