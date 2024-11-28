@@ -10,11 +10,11 @@
 
 # Metrics
 
-|**Category**|**Title**|**SLO**|**Weight**|
-|--|--|--|--|
-{% for a in unique_categories %}|**{{ a }}**||||
+|**Category**|**Metric id**|**Title**|**SLO**|**Weight**|
+|--|--|--|--|--|
+{% for a in unique_categories %}|**{{ a }}**|||||
 {% for x in data if x['category'] == a -%}
-||`{{ x['metric_id'] }}` - {{ x['title'] }}||{{ '![slo](https://img.shields.io/badge/{:.2f}%-{:.2f}%-00B050?labelColor=FFC000)'.format(x['slo_min'] * 100,x['slo'] * 100) }}|{{ weight(x['weight']) }}|
+||`{{ x['metric_id'] }}`|{{ x['title'] }}||{{ '![slo](https://img.shields.io/badge/{:.2f}%-{:.2f}%-00B050?labelColor=FFC000)'.format(x['slo_min'] * 100,x['slo'] * 100) }}|{{ weight(x['weight']) }}|
 {% endfor -%}
 {% endfor %}
 

@@ -2,18 +2,18 @@
 
 # Metrics
 
-|**Category**|**Title**|**SLO**|**Weight**|
-|--|--|--|--|
-|**Software Development**||||
-||`development_vulnerabilities` - Software repositories without critical vulnerabilities||![slo](https://img.shields.io/badge/98.00%-99.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
-|**Identity Management**||||
-||`identity_credentials` - Identity - Aged Credentials||![slo](https://img.shields.io/badge/98.00%-99.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
-||`identity_dormant` - Identity - Inactive Identities||![slo](https://img.shields.io/badge/98.00%-99.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
-|**User Security**||||
-||`user_awareness` - Users with awareness training completed||![slo](https://img.shields.io/badge/80.00%-90.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.4-yellow)|
-|**Vulnerability Management**||||
-||`vulnerabilities_critical` - Systems with Critical and High vulnerabilities||![slo](https://img.shields.io/badge/80.00%-95.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
-||`vulnerabilities_critical_patching` - Critical vulnerabilities patched within SLO||![slo](https://img.shields.io/badge/80.00%-95.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
+|**Category**|**Metric id**|**Title**|**SLO**|**Weight**|
+|--|--|--|--|--|
+|**Software Development**|||||
+||`development_vulnerabilities`|Software repositories without critical vulnerabilities||![slo](https://img.shields.io/badge/98.00%-99.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
+|**Identity Management**|||||
+||`identity_credentials`|Identity - Aged Credentials||![slo](https://img.shields.io/badge/98.00%-99.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
+||`identity_dormant`|Identity - Inactive Identities||![slo](https://img.shields.io/badge/98.00%-99.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
+|**User Security**|||||
+||`user_awareness`|Users with awareness training completed||![slo](https://img.shields.io/badge/80.00%-90.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.4-yellow)|
+|**Vulnerability Management**|||||
+||`vulnerabilities_critical`|Systems with Critical and High vulnerabilities||![slo](https://img.shields.io/badge/80.00%-95.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
+||`vulnerabilities_critical_patching`|Critical vulnerabilities patched within SLO||![slo](https://img.shields.io/badge/80.00%-95.00%-00B050?labelColor=FFC000)|![icon](https://img.shields.io/badge/0.8-red)|
 
 
 ## List of metrics
