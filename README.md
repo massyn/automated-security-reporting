@@ -7,6 +7,8 @@ Open Source Security Report Platform
 graph LR
     source:::source
     environment[environment variables]:::config
+    s3[(AWS S3)]:::data
+
     subgraph collector
         
         collector.extract[extract]:::code
@@ -16,6 +18,7 @@ graph LR
     end
     source --> collector.extract
     environment --> collector.extract
+    collector.data -- backup --> s3
 
     subgraph pipeline
         metrics.definition[metric definitions]:::config
@@ -56,6 +59,7 @@ graph LR
 ## Architecture
 
 * [Data Model](00-docs/data-model.md)
+* [Data Flow](00-docs/data-flow.md)
 
 ## Collectors
 
@@ -65,7 +69,8 @@ graph LR
 
 ## Metrics
 
-TODO
+* [How to](00-docs/how-to-run-metrics.md) run metrics
+* [Creating](00-docs/create-a-metric.md) a metric
 
 ## Dashboard
 

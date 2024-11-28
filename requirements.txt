@@ -10,3 +10,5 @@ Jinja2
 okta
 duckdb
 boto3
+tabulate
+pyarrow

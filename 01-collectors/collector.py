@@ -55,10 +55,11 @@ class Collector:
 
             data = self.add_meta(data1)
 
-            self.store_postgres(tag,data)
             self.store_file(tag,data)
-            self.store_duckdb(tag,data)
+            self.store_aws_s3_backup(tag,data)
             self.store_aws_s3(tag,data)
+            self.store_postgres(tag,data)
+            self.store_duckdb(tag,data)
         else:
             self.log("WARNING",f"No records to be written to {tag} - empty data set")
 
@@ -82,6 +83,33 @@ class Collector:
             self.log("SUCCESS",f"Saving {len(data)} records for {tag} --> {target}")
         except:
             self.log("ERROR",f"Cannot write the file - {target}")
+
+    def store_aws_s3_backup(self,tag,data):
+        if self.check_env('STORE_AWS_S3_BUCKET'):
+            target = os.environ.get('STORE_AWS_S3_BACKUP').replace(
+                '$UUID',str(uuid.uuid4())).replace(
+                '$TAG',tag).replace(
+                '$TENANCY',os.environ.get('TENANCY','default')).replace(
+                '$hh',self.datetime.strftime('%H')).replace(
+                '$mm',self.datetime.strftime('%M')).replace(
+                '$ss',self.datetime.strftime('%S')).replace(
+                '$YYYY',self.datetime.strftime('%Y')).replace(
+                '$MM',self.datetime.strftime('%m')).replace(
+                '$DD',self.datetime.strftime('%d')
+            )
+            self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
+            try:
+                boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(
+                    ACL         = 'bucket-owner-full-control',
+                    ContentType = 'application/json',
+                    Key         = target,
+                    Body        = json.dumps(data,default=str)
+                )
+                self.log("SUCCESS",f"s3.put_object - s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
+            except botocore.exceptions.ClientError as error:
+                self.log("ERROR",f"s3.put_object - {error.response['Error']['Code']}")
+            except:
+                self.log("ERROR",f"s3.put_object")
 
     def store_aws_s3(self,tag,data):
         if self.check_env('STORE_AWS_S3_BUCKET'):

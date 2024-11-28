@@ -8,8 +8,8 @@ RUN apt-get upgrade -y
 COPY requirements.txt .
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-# === Collectors ===
-COPY 01-collectors     01-collectors
+COPY 01-collectors  01-collectors
+COPY 02-metrics     02-metrics
 
 # === Core stuff ===
 COPY run.sh 	.

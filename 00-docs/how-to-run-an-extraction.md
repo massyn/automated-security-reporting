@@ -2,7 +2,7 @@
 
 ## Overview
 
-Each collector is [built](writing-a-collector.md) around the use of environment variables.  A number of variables must be present for the collector to be activated.  The [wrapper](../01-collector/wrapper.py) process will cycle through all collectors, determine if the environment variables are set, and then initate the extraction.
+Each collector is [built](writing-a-collector.md) around the use of environment variables.  A number of variables must be present for the collector to be activated.  The [wrapper](../01-collectors/wrapper.py) process will cycle through all collectors, determine if the environment variables are set, and then initate the extraction.
 
 By using environment variables, you have control over how the extraction process is run.  It can be wrapped into a Docker container, or run standalone using [.env](https://dev.to/jakewitcher/using-env-files-for-environment-variables-in-python-applications-55a1) files
 
@@ -61,7 +61,8 @@ You have the option to save the tables to a Postgres data.  To use Postgres, you
 | **Environment**            | **Purpose**                                | **Example**            |
 |-----------------------------|--------------------------------------------|------------------------|
 | `STORE_AWS_S3_BUCKET`       | The specific bucket where the data will be stored. | `security-data-collector` |
-| `STORE_AWS_S3_KEY`          | The specific key (or filename) to use on S3 | defaulted to `data/tag=$TAG/year=$YYYY/month=$MM/day=$DD/$UUID.json` |
+| `STORE_AWS_S3_KEY`          | The specific key (or filename) to use on S3 | `data/tag=$TAG/year=$YYYY/month=$MM/day=$DD/$UUID.json` |
+| `STORE_AWS_S3_BACKUP`       | The specific key (or filename) to use on S3 for the collector backup job | `collector/$TAG/$TENANCY.json` |
 
 ### DuckDB
 
@@ -98,4 +99,15 @@ Save the files to an AWS S3 bucket, partition the data by date and uuid to allow
 ```bash
 export STORE_AWS_S3_BUCKET=my-s3-bucket-name
 export STORE_AWS_S3_KEY='data/$TAG/$YYYY/$MM/$DD/$UUID.json'
+```
+
+## Managing state
+
+When all collectors work fine all the time, there is no issue.  When they fail, and the API is unable to retrieve data, the metrics will not generate.  When running in a Docker-based environment, everytime the docker image spins up, none of the data is available.  Using AWS S3 as a backup storage will allow the last downloaded data to be available for querying by the metric if required.
+
+To utilise the AWS S3 backup mechanism, the following 2 environment variables need to be set.
+
+```bash
+export STORE_AWS_S3_BUCKET=my-s3-bucket-name
+export STORE_AWS_S3_BACKUP='data/$TAG/$TENANCY.json'
 ```

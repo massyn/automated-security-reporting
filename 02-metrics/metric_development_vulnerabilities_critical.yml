@@ -1,0 +1,24 @@
+metric_id: development_vulnerabilities
+title: "Software repositories without critical vulnerabilities"
+description: "Software repositories without critical vulnerabilities"
+category: "Software Development"
+slo: 0.99
+slo_min: 0.98
+weight: 0.8
+query: |
+  SELECT
+      projects.attributes.name AS resource,
+      'snyk' as resource_type,
+      CASE 
+          WHEN issues.relationships.scan_item.data.id IS NOT NULL THEN 1
+          ELSE 0
+      END AS compliance,
+      projects.attributes.target_file AS detail
+  FROM 
+      {{ ref('snyk_projects') }} AS projects
+  LEFT JOIN 
+      {{ ref('snyk_issues') }} AS issues
+  ON 
+      projects.id = issues.relationships.scan_item.data.id
+      AND issues.attributes.status = 'open'
+      AND issues.attributes.effective_severity_level IN ('critical', 'high')

@@ -12,3 +12,21 @@ erDiagram
         string _upload_id           "Unique ID that is set to all downloads that occurred by this collector."
     }
 ```
+
+## Metrics
+
+### Metric definition
+
+TODO
+
+### Metric
+
+```mermaid
+erDiagram
+    metric {
+        string resource      "The unique identifer of the resource being measured."
+        string resource_type "The type of resource being measured, used for attribution."
+        float  compliance    "The compliance state of the resource, represented as a percentage (float value between 0 and 1)"
+        string detail         "Additional information to aid with remediation."
+    }
+```

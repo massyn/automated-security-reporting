@@ -3,6 +3,7 @@ import os
 from jinja2 import Environment, FileSystemLoader
 import importlib
 import re
+import yaml
 
 def extract_store(contents):
     pattern = r'store\(["\']([^"\']+)["\']'
@@ -31,6 +32,18 @@ def collector_data(src):
                 print(f"Plugin '{plugin}' had an error {e}")
     return data
 
+def metrics_data(src):
+    data = []
+    if src not in sys.path:
+        sys.path.append(src)
+    for filename in sorted(os.listdir(src)):
+        if filename.startswith('metric_') and filename.endswith('.yml'):
+            metric = os.path.splitext(filename)[0]
+            print(f"Metric : {metric}")
+            with open(f"{src}/{metric}.yml","rt",encoding='utf-8') as y:
+                data.append(yaml.safe_load(y))
+    return data
+
 def render_jinja(data,template,output):
     template_dir = '99-templates'
     env = Environment(loader=FileSystemLoader(template_dir)).get_template(template)
@@ -40,5 +53,7 @@ def render_jinja(data,template,output):
         q.write(result)
 
 col = collector_data('01-collectors')
+met = metrics_data('02-metrics')
 
 render_jinja(col,'collectors.md','00-docs/collectors.md')
+render_jinja(met,'metrics.md','00-docs/metrics.md')
