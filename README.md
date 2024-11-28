@@ -71,6 +71,7 @@ graph LR
 
 * [How to](00-docs/how-to-run-metrics.md) run metrics
 * [Creating](00-docs/create-a-metric.md) a metric
+* [List](00-docs/metrics.md) of metrics
 
 ## Dashboard
 
