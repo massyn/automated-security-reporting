@@ -3,8 +3,7 @@
 service lighttpd start
 
 # Upload the website code to S3
-
-if [ -z $STORE_AWS_S3_WEB ]; then
+if [ -z "$STORE_AWS_S3_WEB" ]; then
   aws s3 sync build s3://$STORE_AWS_S3_WEB --acl bucket-owner-full-control
 fi
 

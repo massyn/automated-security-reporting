@@ -1,4 +1,7 @@
 # automated-security-reporting
+
+[![Build](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml/badge.svg)](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml)
+
 Open Source Security Report Platform
 
 ## High Level Architecture
@@ -55,6 +58,21 @@ graph LR
     classDef dim fill:#f9c6c9,stroke:#000,stroke-width:2px,color:#000;
     classDef calc fill:#c6d8f9,stroke:#000,stroke-width:2px,color:#000;
 ```
+
+## Quick start
+
+Grab your Crowdstrike API keys.
+
+Run
+
+```bash
+docker run -p 8081:80 \
+    -e FALCON_CLIENT_ID="xxx" \
+    -e FALCON_SECRET="xxx" \
+    -t massyn/asr:main 
+```
+
+Open your browser to http://localhost, and view your dashboard.
 
 ## Architecture
 
