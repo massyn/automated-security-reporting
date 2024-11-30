@@ -64,6 +64,8 @@ class Collector:
             self.log("WARNING",f"No records to be written to {tag} - empty data set")
 
     def variables(self,tag,input):
+        if tag == None:
+            tag = ''
         return input.replace(
             '%UUID',str(uuid.uuid4())).replace(
             '%TAG',tag).replace(
