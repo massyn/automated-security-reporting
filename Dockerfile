@@ -5,6 +5,12 @@ WORKDIR /python-docker
 RUN apt-get update
 RUN apt-get upgrade -y
 
+# == Install AWS Cli
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm awscliv2.zip
+
 # == web stuff
 RUN apt-get install lighttpd lighttpd-doc -y
 COPY 03-dashboard/build /var/www/html
