@@ -77,7 +77,7 @@ class Collector:
         )
     
     def store_file(self,tag,data):
-        target = self.variables(os.environ.get('STORE_FILE','../data/source/%TAG/%TENANCY.json'))
+        target = self.variables(tag,os.environ.get('STORE_FILE','../data/source/%TAG/%TENANCY.json'))
         
         try:
             os.makedirs(os.path.dirname(target),exist_ok = True)        
@@ -89,7 +89,7 @@ class Collector:
 
     def store_aws_s3_backup(self,tag,data):
         if self.check_env('STORE_AWS_S3_BUCKET'):
-            target = self.variables(os.environ.get('STORE_AWS_S3_BACKUP'))
+            target = self.variables(tag,os.environ.get('STORE_AWS_S3_BACKUP'))
             self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
             try:
                 boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(
@@ -106,7 +106,7 @@ class Collector:
 
     def store_aws_s3(self,tag,data):
         if self.check_env('STORE_AWS_S3_BUCKET'):
-            target = self.variables(os.environ.get('STORE_AWS_S3_KEY','data/tag=%TAG/year=%YYYY/month=%MM/day=%DD/%UUID.json'))
+            target = self.variables(tag,os.environ.get('STORE_AWS_S3_KEY','data/tag=%TAG/year=%YYYY/month=%MM/day=%DD/%UUID.json'))
             self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
             try:
                 boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(

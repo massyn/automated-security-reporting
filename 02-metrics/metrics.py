@@ -32,7 +32,7 @@ class Metric:
         self.history = []
 
     def upload_to_s3(self,file_name,bucket,key):
-        if bucket != None and key != None:
+        if bucket != None and key != None and os.path.exists(file_name):
             s3_client = boto3.client('s3')
             try:
                 s3_client.upload_file(file_name, bucket, key, ExtraArgs={'ACL': 'bucket-owner-full-control'})
