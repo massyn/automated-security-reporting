@@ -59,9 +59,9 @@ graph LR
     classDef calc fill:#c6d8f9,stroke:#000,stroke-width:2px,color:#000;
 ```
 
-## Quick start
+## Quick start using Docker
 
-Grab your Crowdstrike API keys.
+Grab your Crowdstrike API keys. (or if not Crowdstrike, any of the built-in [collectors](00-docs/collectors.md)).
 
 Run
 
@@ -73,6 +73,30 @@ docker run -p 8081:80 \
 ```
 
 Open your browser to http://localhost, and view your dashboard.
+
+### Modes of operation
+
+By default, the Docker instance will start up, do an extraction, and update the local website on the running instance.
+
+The instance can also run in an extract-only mode, where the data will be downloaded and processed, and optionally also updated to a target S3 hosted website.
+
+A typical use case would entail the following :
+
+```bash
+docker run -p 8081:80 \
+    -e FALCON_CLIENT_ID="xxx" \
+    -e FALCON_SECRET="xxx" \
+    -e STORE_AWS_S3_BUCKET=my-s3-bucket-name \
+    -e STORE_AWS_S3_BACKUP='data/%TAG/%TENANCY.json'    \
+    -e STORE_AWS_S3_WEB=my-s3-bucket-name-web \
+    -t massyn/asr:main 
+```
+
+where
+
+* `STORE_AWS_S3_BUCKET` is the AWS S3 bucket where the target data files will be stored to retain state.
+* `STORE_AWS_S3_BACKUP` is key in the same bucket where the collector will store a copy of the downloaded data.
+* `STORE_AWS_S3_WEB` is the AWS S3 bucket where the static website is served from.
 
 ## Architecture
 

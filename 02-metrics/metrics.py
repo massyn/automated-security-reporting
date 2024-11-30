@@ -33,10 +33,11 @@ class Metric:
 
     def upload_to_s3(self,file_name,bucket,key):
         if bucket != None and key != None and os.path.exists(file_name):
+            self.log("INFO",f"S3 : Uploading {file_name} to s3://{bucket}/{key}")
             s3_client = boto3.client('s3')
             try:
                 s3_client.upload_file(file_name, bucket, key, ExtraArgs={'ACL': 'bucket-owner-full-control'})
-                self.log("SUCCESS",f"Backed up {key} to S3")
+                self.log("SUCCESS",f" - Upload complete.")
             except ClientError as e:
                 self.log("ERROR",e)
                 return False
@@ -216,7 +217,7 @@ class Metric:
         })
 
 def main(**KW):
-    M = Metric(data_path = KW['data_path'],parquet_path = KW['parquet_path'],web = '/var/www/html/public')
+    M = Metric(data_path = KW['data_path'],parquet_path = KW['parquet_path'],web = '/var/www/html')
 
     if KW['metric'] == None and not KW['dryrun']:
         M.download_from_s3(f'{M.parquet_path}/summary.parquet','summary.parquet')
