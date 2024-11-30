@@ -3,7 +3,7 @@
 service lighttpd start
 
 # Upload the website code to S3
-if [ -z "$STORE_AWS_S3_WEB" ]; then
+if [ !-z "$STORE_AWS_S3_WEB" ]; then
   echo "Uploading the React site to $STORE_AWS_S3_WEB"
   aws s3 sync build s3://$STORE_AWS_S3_WEB --acl bucket-owner-full-control
 else
