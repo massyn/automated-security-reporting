@@ -66,6 +66,8 @@ class Collector:
     def variables(self,tag,input):
         if tag == None:
             tag = ''
+        if input == None:
+            input = ''
         return input.replace(
             '%UUID',str(uuid.uuid4())).replace(
             '%TAG',tag).replace(
