@@ -248,12 +248,12 @@ def main(**KW):
     if KW['metric'] == None and not KW['dryrun']:
         M.upload_to_s3(
             f"{M.parquet_path}/summary.parquet",
-            os.environ.get('STORE_AWS_S3_HISTORY'),
+            os.environ.get('STORE_AWS_S3_BUCKET'),
             f'{os.environ['STORE_AWS_S3_HISTORY']}/summary.parquet'
         )
         M.upload_to_s3(
             f"{M.parquet_path}/detail.parquet",
-            os.environ.get('STORE_AWS_S3_HISTORY'),
+            os.environ.get('STORE_AWS_S3_BUCKET'),
             f'{os.environ['STORE_AWS_S3_HISTORY']}/detail.parquet'
         )
 
