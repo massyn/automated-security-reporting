@@ -75,4 +75,4 @@ graph LR
 
 ## Dashboard
 
-TODO
+* Setting up the [Dashboard](00-docs/dashboard.md)
