@@ -76,29 +76,29 @@ You can customise the path where the target files are to be sent, depending on y
 
 |**Variable**|**Purpose**|
 |--|--|
-|`$UUID`|A unique uuid that is created for this specific file.|
-|`$TAG`|The data source function|
-|`$TENANCY`|The tenancy variable (if defined from an environment variable)|
-|`$hh`|Hour|
-|`$mm`|Minute|
-|`$ss`|Second|
-|`$YYYY`|Year|
-|`$MM`|Month|
-|`$DD`|Day|
+|`%UUID`|A unique uuid that is created for this specific file.|
+|`%TAG`|The data source function|
+|`%TENANCY`|The tenancy variable (if defined from an environment variable)|
+|`%hh`|Hour|
+|`%mm`|Minute|
+|`%ss`|Second|
+|`%YYYY`|Year|
+|`%MM`|Month|
+|`%DD`|Day|
 
 ### Examples
 
 Store files locally, overwriting it every time when it runs with the latest copy
 
 ```bash
-export STORE_FILE='../data/source/$TAG/$TENANCY.json'
+export STORE_FILE='../data/source/%TAG/%TENANCY.json'
 ```
 
 Save the files to an AWS S3 bucket, partition the data by date and uuid to allow ingestion to a tool like Snowflake.
 
 ```bash
 export STORE_AWS_S3_BUCKET=my-s3-bucket-name
-export STORE_AWS_S3_KEY='data/$TAG/$YYYY/$MM/$DD/$UUID.json'
+export STORE_AWS_S3_KEY='data/%TAG/%YYYY/%MM/%DD/%UUID.json'
 ```
 
 ## Managing state
@@ -109,5 +109,5 @@ To utilise the AWS S3 backup mechanism, the following 2 environment variables ne
 
 ```bash
 export STORE_AWS_S3_BUCKET=my-s3-bucket-name
-export STORE_AWS_S3_BACKUP='data/$TAG/$TENANCY.json'
+export STORE_AWS_S3_BACKUP='data/%TAG/%TENANCY.json'
 ```

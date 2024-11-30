@@ -63,18 +63,21 @@ class Collector:
         else:
             self.log("WARNING",f"No records to be written to {tag} - empty data set")
 
-    def store_file(self,tag,data):
-        target = os.environ.get('STORE_FILE','../data/source/$TAG/$TENANCY.json').replace(
-            '$UUID',str(uuid.uuid4())).replace(
-            '$TAG',tag).replace(
-            '$TENANCY',os.environ.get('TENANCY','default')).replace(
-            '$hh',self.datetime.strftime('%H')).replace(
-            '$mm',self.datetime.strftime('%M')).replace(
-            '$ss',self.datetime.strftime('%S')).replace(
-            '$YYYY',self.datetime.strftime('%Y')).replace(
-            '$MM',self.datetime.strftime('%m')).replace(
-            '$DD',self.datetime.strftime('%d')
+    def variables(self,tag,input):
+        return input.replace(
+            '%UUID',str(uuid.uuid4())).replace(
+            '%TAG',tag).replace(
+            '%TENANCY',os.environ.get('TENANCY','default')).replace(
+            '%hh',self.datetime.strftime('%H')).replace(
+            '%mm',self.datetime.strftime('%M')).replace(
+            '%ss',self.datetime.strftime('%S')).replace(
+            '%YYYY',self.datetime.strftime('%Y')).replace(
+            '%MM',self.datetime.strftime('%m')).replace(
+            '%DD',self.datetime.strftime('%d')
         )
+    
+    def store_file(self,tag,data):
+        target = self.variables(os.environ.get('STORE_FILE','../data/source/%TAG/%TENANCY.json'))
         
         try:
             os.makedirs(os.path.dirname(target),exist_ok = True)        
@@ -86,17 +89,7 @@ class Collector:
 
     def store_aws_s3_backup(self,tag,data):
         if self.check_env('STORE_AWS_S3_BUCKET'):
-            target = os.environ.get('STORE_AWS_S3_BACKUP').replace(
-                '$UUID',str(uuid.uuid4())).replace(
-                '$TAG',tag).replace(
-                '$TENANCY',os.environ.get('TENANCY','default')).replace(
-                '$hh',self.datetime.strftime('%H')).replace(
-                '$mm',self.datetime.strftime('%M')).replace(
-                '$ss',self.datetime.strftime('%S')).replace(
-                '$YYYY',self.datetime.strftime('%Y')).replace(
-                '$MM',self.datetime.strftime('%m')).replace(
-                '$DD',self.datetime.strftime('%d')
-            )
+            target = self.variables(os.environ.get('STORE_AWS_S3_BACKUP'))
             self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
             try:
                 boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(
@@ -113,17 +106,7 @@ class Collector:
 
     def store_aws_s3(self,tag,data):
         if self.check_env('STORE_AWS_S3_BUCKET'):
-            target = os.environ.get('STORE_AWS_S3_KEY','data/tag=$TAG/year=$YYYY/month=$MM/day=$DD/$UUID.json').replace(
-                '$UUID',str(uuid.uuid4())).replace(
-                '$TAG',tag).replace(
-                '$TENANCY',os.environ.get('TENANCY','default')).replace(
-                '$hh',self.datetime.strftime('%H')).replace(
-                '$mm',self.datetime.strftime('%M')).replace(
-                '$ss',self.datetime.strftime('%S')).replace(
-                '$YYYY',self.datetime.strftime('%Y')).replace(
-                '$MM',self.datetime.strftime('%m')).replace(
-                '$DD',self.datetime.strftime('%d')
-            )
+            target = self.variables(os.environ.get('STORE_AWS_S3_KEY','data/tag=%TAG/year=%YYYY/month=%MM/day=%DD/%UUID.json'))
             self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
             try:
                 boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(
