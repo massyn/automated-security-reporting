@@ -32,18 +32,22 @@ class Metric:
         self.history = []
 
     def upload_to_s3(self,file_name,bucket,key):
-        if bucket != None and key != None and os.path.exists(file_name):
-            self.log("INFO",f"S3 : Uploading {file_name} to s3://{bucket}/{key}")
-            s3_client = boto3.client('s3')
-            try:
-                s3_client.upload_file(file_name, bucket, key, ExtraArgs={'ACL': 'bucket-owner-full-control'})
-                self.log("SUCCESS",f" - Upload complete.")
-            except ClientError as e:
-                self.log("ERROR",e)
-                return False
-            return True
+        self.log('INFO','Upload to S3 : bucket = {bucket} , key = {key}, file_name = {file_name} ...')
+        if not os.path.exists(file_name):
+            self.log('WARNING',f'Not uploading to S3 because {file_name} does not exist')
         else:
-            self.log('WARNING','Not uploading to S3 because none of the variables are defined.')
+            if bucket != None and key != None and os.path.exists(file_name):
+                self.log("INFO",f"S3 : Uploading {file_name} to s3://{bucket}/{key}")
+                s3_client = boto3.client('s3')
+                try:
+                    s3_client.upload_file(file_name, bucket, key, ExtraArgs={'ACL': 'bucket-owner-full-control'})
+                    self.log("SUCCESS",f" - Upload complete.")
+                except ClientError as e:
+                    self.log("ERROR",e)
+                    return False
+                return True
+            else:
+                self.log('WARNING','Not uploading to S3 because none of the variables are defined.')
 
     def download_from_s3(self,file_name,key):
         if os.environ.get('STORE_AWS_S3_HISTORY'):

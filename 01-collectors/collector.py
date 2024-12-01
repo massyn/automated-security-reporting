@@ -93,7 +93,7 @@ class Collector:
 
     def store_aws_s3_backup(self,tag,data):
         if self.check_env('STORE_AWS_S3_BUCKET'):
-            target = self.variables(tag,os.environ.get('STORE_AWS_S3_BACKUP'))
+            target = self.variables(tag,os.environ.get('STORE_AWS_S3_BACKUP',''))
             self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
             try:
                 boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(
