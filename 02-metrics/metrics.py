@@ -32,7 +32,7 @@ class Metric:
         self.history = []
 
     def upload_to_s3(self,file_name,bucket,key):
-        self.log('INFO','Upload to S3 : bucket = {bucket} , key = {key}, file_name = {file_name} ...')
+        self.log('INFO',f'Upload to S3 : bucket = {bucket} , key = {key}, file_name = {file_name} ...')
         if not os.path.exists(file_name):
             self.log('WARNING',f'Not uploading to S3 because {file_name} does not exist')
         else:
