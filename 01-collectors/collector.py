@@ -11,7 +11,16 @@ from psycopg2 import Error
 
 class Collector:
     def __init__(self,meta = { 'title' : 'Collector'}):
-        self.tenancy = os.environ.get('TENANCY','default')
+        self.config = {
+            "tenancy"               : os.environ.get('TENANCY','default'),
+            "STORE_FILE"            : os.environ.get('STORE_FILE','../data/source/%TAG/%TENANCY.json'),
+            "STORE_AWS_S3_BUCKET"   : os.environ.get('STORE_AWS_S3_BUCKET',''),
+            "STORE_AWS_S3_BACKUP"   : os.environ.get('STORE_AWS_S3_BACKUP','backup/%TAG/%TENANCY.json'),
+            "STORE_AWS_S3_KEY"      : os.environ.get('STORE_AWS_S3_KEY',''),
+            "STORE_DUCKDB"          : os.environ.get('STORE_DUCKDB',''),
+        }
+
+        self.log("INFO",f"STORE_AWS_S3_BUCKET = {self.config['STORE_AWS_S3_BUCKET']}")
         self.datetime = datetime.datetime.now(datetime.timezone.utc)
         self.upload_timestamp = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
         self.upload_id = str(uuid.uuid4())
@@ -43,7 +52,7 @@ class Collector:
     def add_meta(self,data):
         new = []
         for i in data:
-            i['_tenancy'] = self.tenancy
+            i['_tenancy'] = self.config['tenancy']
             i['_upload_timestamp'] = self.upload_timestamp
             i['_upload_id'] = self.upload_id
             new.append(i)
@@ -56,8 +65,8 @@ class Collector:
             data = self.add_meta(data1)
 
             self.store_file(tag,data)
-            self.store_aws_s3_backup(tag,data)
-            self.store_aws_s3(tag,data)
+            self.upload_to_s3(data,tag,self.config['STORE_AWS_S3_BACKUP'])
+            self.upload_to_s3(data,tag,self.config['STORE_AWS_S3_KEY'])
             self.store_postgres(tag,data)
             self.store_duckdb(tag,data)
         else:
@@ -71,7 +80,7 @@ class Collector:
         return input.replace(
             '%UUID',str(uuid.uuid4())).replace(
             '%TAG',tag).replace(
-            '%TENANCY',os.environ.get('TENANCY','default')).replace(
+            '%TENANCY',self.config['tenancy']).replace(
             '%hh',self.datetime.strftime('%H')).replace(
             '%mm',self.datetime.strftime('%M')).replace(
             '%ss',self.datetime.strftime('%S')).replace(
@@ -81,8 +90,7 @@ class Collector:
         )
     
     def store_file(self,tag,data):
-        target = self.variables(tag,os.environ.get('STORE_FILE','../data/source/%TAG/%TENANCY.json'))
-        
+        target = self.variables(tag,self.config['STORE_FILE'])
         try:
             os.makedirs(os.path.dirname(target),exist_ok = True)        
             with open(target,"wt",encoding='UTF-8') as q:
@@ -91,15 +99,15 @@ class Collector:
         except:
             self.log("ERROR",f"Cannot write the file - {target}")
 
-    def store_aws_s3_backup(self,tag,data):
-        if self.check_env('STORE_AWS_S3_BUCKET'):
-            target = self.variables(tag,os.environ.get('STORE_AWS_S3_BACKUP',''))
-            self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
+    def upload_to_s3(self,data,tag,target):
+        key = self.variables(tag,target)
+        if key != '' and self.config['STORE_AWS_S3_BUCKET'] != '':
+            self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.config['STORE_AWS_S3_BUCKET']}/{key}")
             try:
-                boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(
+                boto3.resource('s3').Bucket(self.config['STORE_AWS_S3_BUCKET']).put_object(
                     ACL         = 'bucket-owner-full-control',
                     ContentType = 'application/json',
-                    Key         = target,
+                    Key         = key,
                     Body        = json.dumps(data,default=str)
                 )
                 self.log("SUCCESS",f"s3.put_object - s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
@@ -107,23 +115,8 @@ class Collector:
                 self.log("ERROR",f"s3.put_object - {error.response['Error']['Code']}")
             except:
                 self.log("ERROR",f"s3.put_object")
-
-    def store_aws_s3(self,tag,data):
-        if self.check_env('STORE_AWS_S3_BUCKET'):
-            target = self.variables(tag,os.environ.get('STORE_AWS_S3_KEY','data/tag=%TAG/year=%YYYY/month=%MM/day=%DD/%UUID.json'))
-            self.log("INFO",f"Saving {len(data)} records for {tag} --> s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
-            try:
-                boto3.resource('s3').Bucket(os.environ['STORE_AWS_S3_BUCKET']).put_object(
-                    ACL         = 'bucket-owner-full-control',
-                    ContentType = 'application/json',
-                    Key         = target,
-                    Body        = json.dumps(data,default=str)
-                )
-                self.log("SUCCESS",f"s3.put_object - s3://{self.check_env('STORE_AWS_S3_BUCKET')}/{target}")
-            except botocore.exceptions.ClientError as error:
-                self.log("ERROR",f"s3.put_object - {error.response['Error']['Code']}")
-            except:
-                self.log("ERROR",f"s3.put_object")
+        else:
+            self.log("WARNING",f"- Not uploading to S3...")
 
     def store_postgres(self,tag,data):
         host        = self.check_env('STORE_POSTGRES_HOST')
@@ -167,7 +160,7 @@ class Collector:
                 # -- insert data
                 for d in data:
                     try:
-                        cursor.execute(f"INSERT INTO {schema}.{tag} (upload_timestamp,tenancy,json_data) VALUES(%s,%s,%s)",(self.upload_timestamp,self.tenancy,json.dumps(d)))
+                        cursor.execute(f"INSERT INTO {schema}.{tag} (upload_timestamp,tenancy,json_data) VALUES(%s,%s,%s)",(self.upload_timestamp,self.config['tenancy'],json.dumps(d)))
                     except (Exception, Error) as error:
                         self.log("ERROR",f"Postgres - Unable to insert record : {error}")
                 con.commit()
@@ -175,8 +168,8 @@ class Collector:
                 self.log("SUCCESS",f"Postgres - {tag} - Inserted {len(data)} records.")
 
     def store_duckdb(self,tag,data):
-        target = self.check_env('STORE_DUCKDB')
-        if target:
+        target = self.variables(tag,self.config['STORE_DUCKDB'])
+        if target != '':
             try:
                 db = duckdb.connect(database = target, read_only = False)
                 self.log("SUCCESS",f"DuckDB : Connected : {target}")
@@ -192,7 +185,7 @@ class Collector:
 
                 # -- insert data
                 for d in data:
-                    cursor.execute(f"INSERT INTO {tag} (upload_timestamp,tenancy,json_data) VALUES(?,?,?)",(self.upload_timestamp,self.tenancy,json.dumps(d)))
+                    cursor.execute(f"INSERT INTO {tag} (upload_timestamp,tenancy,json_data) VALUES(?,?,?)",(self.upload_timestamp,self.config['tenancy'],json.dumps(d)))
                 db.commit()
                 cursor.close()
                 self.log("SUCCESS",f"DuckDB - {tag} - Inserted {len(data)} records.")

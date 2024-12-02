@@ -1,3 +1,5 @@
+data/
+03-dashboard/public/*.csv
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

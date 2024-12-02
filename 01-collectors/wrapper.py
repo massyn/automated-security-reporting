@@ -1,5 +1,6 @@
 import os
 import importlib
+import argparse
 
 from dotenv import load_dotenv
 
@@ -22,10 +23,4 @@ def main(filter = ''):
 
 if __name__=='__main__':
     load_dotenv()
-    print("Collector Wrapper")
-    print("--------------------------------------")
-    print(f"STORE_FILE (where the local files are stored) = {os.environ.get('STORE_FILE')}")
-    print(f"STORE_AWS_S3_BUCKET (where the main data is stored) = {os.environ.get('STORE_AWS_S3_BUCKET')}")
-    print(f"STORE_AWS_S3_BACKUP (where we store the last downloaded collector) = {os.environ.get('STORE_AWS_S3_BACKUP')}")
-    print(f"STORE_AWS_S3_KEY (where we want to save the collector files for example if you want to keep history) = {os.environ.get('STORE_AWS_S3_KEY')}")
     main()

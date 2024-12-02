@@ -111,3 +111,14 @@ To utilise the AWS S3 backup mechanism, the following 2 environment variables ne
 export STORE_AWS_S3_BUCKET=my-s3-bucket-name
 export STORE_AWS_S3_BACKUP='data/%TAG/%TENANCY.json'
 ```
+
+## Collector Environment variables
+
+The collector wrapper script utilises the following environment variables.
+
+| **Environment**       | **Purpose**                                | **Default value**                                    |
+|-----------------------|--------------------------------------------|------------------------------------------------------|
+| `STORE_FILE`          | Defines the local path where the local file will be stored. | `../data/source/%TAG/%TENANCY.json` |
+| `STORE_AWS_S3_BACKUP` | Define the AWS S3 bucket where the collector will store its working files. |  `backup/%TAG/%TENANCY.json` |
+| `STORE_AWS_S3_KEY` | Similar to the previous parameter.  Use this option if you wanted to write a 2nd AWS file, for example if you wanted to send the data to snowflake, you can use something like `data/tag=%TAG/year=%YYYY/month=%MM/day=%DD/%UUID.json` | |
+| `STORE_DUCKDB` | If you are so inclined to send the data to a DuckDB instance, you can specify the DuckDB file path. | |

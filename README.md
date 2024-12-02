@@ -23,6 +23,7 @@ graph LR
     environment --> collector.extract
     collector.data -- backup --> s3
 
+    
     subgraph pipeline
         metrics.definition[metric definitions]:::config
         metrics.process[metrics]:::code
@@ -38,6 +39,7 @@ graph LR
     metrics.definition --> metrics.process
     collector.data --> metrics.process
     metrics.data --> metrics.prepdashboard
+    metrics.data -- backup --> s3
     
     port
     subgraph dashboard
@@ -49,6 +51,8 @@ graph LR
     dashboard.server --> port
     metrics.prepdashboard --> dashboard.data
     dashboard.data --> dashboard.web
+
+    dashboard.web -- upload --> s3web[(AWS S3)]:::data
 
     classDef source stroke:#0f0
     classDef data stroke:#00f
@@ -66,7 +70,7 @@ Grab your Crowdstrike API keys. (or if not Crowdstrike, any of the built-in [col
 Run
 
 ```bash
-docker run -p 8081:80 \
+docker run -p 80:80 \
     -e FALCON_CLIENT_ID="xxx" \
     -e FALCON_SECRET="xxx" \
     -t massyn/asr:main 
@@ -83,7 +87,7 @@ The instance can also run in an extract-only mode, where the data will be downlo
 A typical use case would entail the following :
 
 ```bash
-docker run -p 8081:80 \
+docker run -p 80:80 \
     -e FALCON_CLIENT_ID="xxx" \
     -e FALCON_SECRET="xxx" \
     -e STORE_AWS_S3_BUCKET=my-s3-bucket-name \

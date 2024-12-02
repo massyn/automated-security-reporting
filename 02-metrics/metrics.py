@@ -11,6 +11,12 @@ from botocore.exceptions import ClientError
 
 class Metric:
     def __init__(self,**KW):
+        self.config = {
+            "STORE_AWS_S3_BUCKET"   : os.environ.get('STORE_AWS_S3_BUCKET',''),
+            "STORE_AWS_S3_HISTORY"  : os.environ.get('STORE_AWS_S3_HISTORY','history'),
+            "STORE_AWS_S3_WEB"      : os.environ.get('STORE_AWS_S3_WEB',''),
+        }
+
         if KW.get('data_path'):
             self.data_path = KW['data_path']
             self.log('INFO',f"Data Path = {self.data_path}")
@@ -50,14 +56,14 @@ class Metric:
                 self.log('WARNING','Not uploading to S3 because none of the variables are defined.')
 
     def download_from_s3(self,file_name,key):
-        if os.environ.get('STORE_AWS_S3_HISTORY'):
+        if self.config['STORE_AWS_S3_HISTORY'] != '':
             if os.path.exists(file_name):
                 self.log("INFO",f"S3 Backup - file {file_name} already exists, so we will skip the overwrite")
             else:
                 self.log("INFO,",f"S3 Backup - starting the local download")
                 s3_client = boto3.client('s3')
                 try:
-                    s3_client.download_file(os.environ['STORE_AWS_S3_BUCKET'], f"{os.environ['STORE_AWS_S3_HISTORY']}/{key}", file_name)
+                    s3_client.download_file(self.config['STORE_AWS_S3_BUCKET'], f"{self.config['STORE_AWS_S3_HISTORY']}/{key}", file_name)
                     self.log("SUCCESS",f"Downloaded from S3 to {key}")
                 except ClientError as e:
                     self.log("ERROR",e)
@@ -99,7 +105,7 @@ class Metric:
                 self.log('SUCCESS',f"Wrote the csv file for the dashboard - {csv_file}")
                 self.upload_to_s3(
                     csv_file,
-                    os.environ.get('STORE_AWS_S3_WEB'),
+                    self.config['STORE_AWS_S3_WEB'],
                     'summary.csv'
                 )
             except:
@@ -146,7 +152,7 @@ class Metric:
                 self.log('SUCCESS',f"Wrote the csv file for the dashboard - {csv_file}")
                 self.upload_to_s3(
                     csv_file,
-                    os.environ.get('STORE_AWS_S3_WEB'),
+                    self.config['STORE_AWS_S3_WEB'],
                     'detail.csv'
                 )
             except:
@@ -252,13 +258,13 @@ def main(**KW):
     if KW['metric'] == None and not KW['dryrun']:
         M.upload_to_s3(
             f"{M.parquet_path}/summary.parquet",
-            os.environ.get('STORE_AWS_S3_BUCKET'),
-            f'{os.environ['STORE_AWS_S3_HISTORY']}/summary.parquet'
+            M.config['STORE_AWS_S3_BUCKET'],
+            f'{M.config['STORE_AWS_S3_HISTORY']}/summary.parquet'
         )
         M.upload_to_s3(
             f"{M.parquet_path}/detail.parquet",
-            os.environ.get('STORE_AWS_S3_BUCKET'),
-            f'{os.environ['STORE_AWS_S3_HISTORY']}/detail.parquet'
+            M.config['STORE_AWS_S3_BUCKET'],
+            f'{M.config['STORE_AWS_S3_HISTORY']}/detail.parquet'
         )
 
     M.log("SUCCESS","All done")
@@ -270,7 +276,7 @@ if __name__=='__main__':
     parser.add_argument('-dryrun', help='Runs the metrics for testing purposes', action='store_true')
     parser.add_argument('-metric',help='Run a dry-run test against a single metric')
     parser.add_argument('-path',help='The path where the metric yaml files are stored',default='.')
-    parser.add_argument('-data',help='The path where the collector saves its files',default='../data/source')
+    parser.add_argument('-data',help='The path where the collector saves its files',default=os.environ.get('STORE_FILE','../data/source'))
     parser.add_argument('-parquet',help='The path where the parquet files will be saved',default='../data')
     parser.add_argument('-web',help='The path where the final csv files are written to',default='/var/www/html/public')
     
