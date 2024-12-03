@@ -2,9 +2,11 @@
 
 [![Build](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml/badge.svg)](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml) ![Docker Pulls](https://img.shields.io/docker/pulls/massyn/asr)
 
+Automated Security Reporting is a continuous assurance or executive cyber security reporting solution.  A number of [collectors](00-docs/collectors.md) and [metrics](00-docs/metrics.md) are currently supported, with more coming.
 
+> Got an idea for a new collector or a metric?  Submit yours now as an [issue](https://github.com/massyn/automated-security-reporting/issues/new).
 
-Open Source Security Report Platform
+![overview](00-docs/overview.png)
 
 ## High Level Architecture
 
