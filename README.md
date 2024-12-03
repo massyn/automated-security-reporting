@@ -1,6 +1,8 @@
 # automated-security-reporting
 
-[![Build](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml/badge.svg)](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml)
+[![Build](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml/badge.svg)](https://github.com/massyn/automated-security-reporting/actions/workflows/build.yml) ![Docker Pulls](https://img.shields.io/docker/pulls/massyn/asr)
+
+
 
 Open Source Security Report Platform
 
@@ -91,16 +93,16 @@ docker run -p 80:80 \
     -e FALCON_CLIENT_ID="xxx" \
     -e FALCON_SECRET="xxx" \
     -e STORE_AWS_S3_BUCKET=my-s3-bucket-name \
-    -e STORE_AWS_S3_BACKUP='data/%TAG/%TENANCY.json'    \
     -e STORE_AWS_S3_WEB=my-s3-bucket-name-web \
-    -t massyn/asr:main 
+    -e EXTRACT_ONLY=true \
+    -td massyn/asr:main 
 ```
 
 where
 
 * `STORE_AWS_S3_BUCKET` is the AWS S3 bucket where the target data files will be stored to retain state.
-* `STORE_AWS_S3_BACKUP` is key in the same bucket where the collector will store a copy of the downloaded data.
 * `STORE_AWS_S3_WEB` is the AWS S3 bucket where the static website is served from.
+* `EXTRACT_ONLY` will only do the extract, update the target S3 website, and then terminate.
 
 ## Architecture
 
