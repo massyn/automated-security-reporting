@@ -2,17 +2,17 @@
 
 ## Hosting on the docker instance
 
-By default, the docker instance installed lighttpd to serve the dashboard on port 8081.
+By default, the docker instance installed lighttpd to serve the dashboard on port 80.
 
-Option 1 - By default, the docker instance will remain persistent, and serve the report.
+### Option 1 - Always up
 
-Option 2 - The instance can run in immutable mode, where it will upload the website to an AWS S3 bucket.
+By default, the docker instance will remain persistent, and serve the report.  While the docker instance is up, you can access the reporting site through http://ip_address (where _ip_address_ is the actual IP address of the docker instance.)
 
-** TODO ** How to switch the docker instance off.
+### Option 2 - Update and terminate
 
-## Hosting locally
+The instance can run in immutable mode, where it will upload the website to an AWS S3 bucket.  On completion, the instance will termiate.  To use this mode, set the `EXTRACT_ONLY` environment variable to TRUE.
 
-TODO
+> Unless you've set the `STORE_AWS_S3_BUCKET` and `STORE_AWS_S3_WEB` environment veriables, the instance won't have anywhere to store the resulting files, and state will be lost.  Be sure to set these variables to ensure your site is getting updated prior to instance termination.
 
 ## Hosting on AWS S3
 
