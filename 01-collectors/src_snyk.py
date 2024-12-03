@@ -16,33 +16,33 @@ def meta():
     }
 
 def call(C,url):
-        C.log("INFO",f"Calling ({url})")
-        data = []
-        headers = {
-            'Authorization' : os.environ['SNYK_TOKEN'],
-            'Content-Type' : 'application/json; charset=utf-8',
-        }
-        while True:
-            req = requests.get(f"{os.environ['SNYK_ENDPOINT']}{url}",headers=headers,timeout=30)
-            if req.status_code != 200:
-                print("==============================")
-                print(f"something went wrong - {req.status_code}")
-                print(f"url = {os.environ['SNYK_ENDPOINT']}{url}")
-                print(req.content)
-                print("==============================")
+    C.log("INFO",f"Calling ({url})")
+    data = []
+    headers = {
+        'Authorization' : os.environ['SNYK_TOKEN'],
+        'Content-Type' : 'application/json; charset=utf-8',
+    }
+    while True:
+        req = requests.get(f"{os.environ['SNYK_ENDPOINT']}{url}",headers=headers,timeout=30)
+        if req.status_code != 200:
+            print("==============================")
+            print(f"something went wrong - {req.status_code}")
+            print(f"url = {os.environ['SNYK_ENDPOINT']}{url}")
+            print(req.content)
+            print("==============================")
+            break
+        else:
+            if not 'data' in req.json():
+                data += req.json()
                 break
             else:
-                if not 'data' in req.json():
-                    data += req.json()
-                    break
+                data += req.json()['data']
+                
+                if 'next' in req.json()['links']:
+                    url = req.json()['links']['next']
                 else:
-                    data += req.json()['data']
-                    
-                    if 'next' in req.json()['links']:
-                        url = req.json()['links']['next']
-                    else:
-                        break
-        return data
+                    break
+    return data
 
 def organizations(C):
     data = call(C,'/rest/orgs?version=2024-08-25&limit=100')
