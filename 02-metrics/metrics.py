@@ -36,6 +36,7 @@ class Metric:
         self.log("INFO",f"Datestamp = {self.datestamp}")
         self.meta = {}
         self.history = []
+        self.privacy = True # Set to true to hide sensitive data during development
 
     def upload_to_s3(self,file_name,bucket,key):
         self.log('INFO',f'Upload to S3 : bucket = {bucket} , key = {key}, file_name = {file_name} ...')
@@ -148,6 +149,9 @@ class Metric:
         self.log('SUCCESS','Updated detail')
         if csv_file is not None:
             try:
+                if self.privacy:
+                    df['detail'] = 'redacted'
+                    df['resource'] = 'redacted'
                 df.to_csv(csv_file, index=False)
                 self.log('SUCCESS',f"Wrote the csv file for the dashboard - {csv_file}")
                 self.upload_to_s3(

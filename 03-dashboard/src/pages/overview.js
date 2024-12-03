@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 
 import ChartLine from '../components/ChartLine';
 import Filters from '../components/Filters';
-
 import { fetchAndExtractCSV } from '../utils/fetchData';
 import { weightedCalculation } from '../utils/weightedCalculations';
 

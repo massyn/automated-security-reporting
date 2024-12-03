@@ -6,6 +6,7 @@ import MetricComponent from '../components/MetricComponent';
 import { processChartData } from '../utils/processChartData';
 import { filterData } from '../utils/processData';
 import { pivotData } from '../utils/processData';
+import { Gauge } from '@mui/x-charts/Gauge';
 import '../style.css';
 
 import { Typography } from "@mui/material";
@@ -31,7 +32,7 @@ export const calculateMetrics = (data, filters = {}) => {
     }, {});
   
     // Pivot the first layer
-    const chart1_pivotData = pivotData(filteredData, ['datestamp', 'category', 'title'], {
+    const chart1_pivotData = pivotData(filteredData, ['datestamp', 'category', 'title', 'metric_id' ], {
       sum_total:   ['sum', 'total'],
       sum_totalok: ['sum', 'totalok'],
       weight:      ['avg', 'weight'],
@@ -125,7 +126,6 @@ const Metrics = () => {
     console.log(chart1_filteredData);
     const { values } = processChartData(chart1_filteredData, 'datestamp', ['value'], 'category');
 
-    
     return (
         <div className="container">
             <h1 className="my-4">Metrics</h1>
@@ -155,16 +155,18 @@ const Metrics = () => {
                                 alignItems: "center",
                                 width: "100%",
                             }}
-                        >
+                        >                            
                             <div style={{ display: "flex", gap: "2em", alignItems: "center" }}>
-                                    <Typography variant="h5" sx={{ width: "750px" }}>
-                                        {key}
-                                    </Typography>
-                                </div>
-                                <div style={{ display: "flex", gap: "2em", alignItems: "center" }}>
-                                    <Typography variant="h5" sx={{ width: "75px" }}>
-                                        {`${(values[key]?.at(-1) * 100).toFixed(2)}%`}
-                                    </Typography>
+                                <Typography variant="h5" sx={{ width: "750px" }}>
+                                    {key}
+                                </Typography>
+                                <Gauge
+                                    value={parseFloat((values[key]?.at(-1) * 100).toFixed(2))}
+                                    startAngle={-110}
+                                    endAngle={110}
+                                    text={`${(values[key]?.at(-1) * 100).toFixed(2)}%`}
+                                    height={80}
+                                />   
                                 </div>
                             </div>
                         </AccordionSummary>

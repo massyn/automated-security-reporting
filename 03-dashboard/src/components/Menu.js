@@ -15,9 +15,9 @@ const Menu = () => {
             <Navbar.Collapse id="basic-navbar-nav">
               <Nav className="me-auto">
                 <Nav.Link href="/">Home</Nav.Link>
-                <Nav.Link href="/categories">Categories</Nav.Link>
+                {/* <Nav.Link href="/categories">Categories</Nav.Link> */}
                 <Nav.Link href="/metrics">Metrics</Nav.Link>
-                <NavDropdown title="Dashboards" id="basic-nav-dropdown">
+                <NavDropdown title="Docs" id="basic-nav-dropdown">
                   <NavDropdown.Item href="/help">Help</NavDropdown.Item>
                 </NavDropdown>
               </Nav>

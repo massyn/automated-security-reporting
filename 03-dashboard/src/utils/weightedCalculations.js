@@ -2,7 +2,7 @@
 export const weightedCalculation = (data, filters = {}, dimension = null) => {
     // Apply the filter first
     const filteredData = data.filter(item =>
-        Object.entries(filters).every(([key, value]) => value === null || item[key] === value)
+        Object.entries(filters).every(([key, value]) => value === null || value === '' || item[key] === value)
     );
 
     // Layer 1 - Aggregate the totals for each of the metrics

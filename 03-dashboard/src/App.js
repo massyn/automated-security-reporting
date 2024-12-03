@@ -7,7 +7,8 @@ import {
 } from "react-router-dom";
 import Overview from "./pages/overview";
 import Metrics from "./pages/metrics"
-import Categories from "./pages/categories"
+import MetricPage from './pages/metricpage';
+// import Categories from "./pages/categories"
 import Help from "./pages/help"
 
 function App() {
@@ -16,9 +17,10 @@ function App() {
             <Menu />
             <Routes>
                 <Route exact path="/" element={<Overview />} />
-                <Route path="/categories" element={<Categories />} />
+                {/* <Route path="/categories" element={<Categories />} /> */}
                 <Route path="/metrics" element={<Metrics />} />
                 <Route path="/help" element={<Help />} />
+                <Route path="/metric/:id" element={<MetricPage />} />
             </Routes>
         </Router>
     );
