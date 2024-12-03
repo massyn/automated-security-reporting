@@ -11,6 +11,7 @@ from psycopg2 import Error
 
 class Collector:
     def __init__(self,meta = { 'title' : 'Collector'}):
+        self.meta = meta
         self.config = {
             "tenancy"               : os.environ.get('TENANCY','default'),
             "STORE_FILE"            : os.environ.get('STORE_FILE','../data/source/%TAG/%TENANCY.json'),
@@ -19,13 +20,11 @@ class Collector:
             "STORE_AWS_S3_KEY"      : os.environ.get('STORE_AWS_S3_KEY',''),
             "STORE_DUCKDB"          : os.environ.get('STORE_DUCKDB',''),
         }
-
         self.log("INFO",f"STORE_AWS_S3_BUCKET = {self.config['STORE_AWS_S3_BUCKET']}")
         self.datetime = datetime.datetime.now(datetime.timezone.utc)
         self.upload_timestamp = self.datetime.strftime('%Y-%m-%d %H:%M:%S')
         self.upload_id = str(uuid.uuid4())
-        self.meta = meta
-       
+        
     def test_environment(self):
         ok = True
         for v in self.meta['env']:
