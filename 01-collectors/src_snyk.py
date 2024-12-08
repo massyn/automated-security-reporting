@@ -16,7 +16,7 @@ def meta():
     }
 
 def call(C,url):
-    C.log("INFO",f"Calling ({url})")
+    C.lib.log("INFO","src_snyk",f"Calling ({url})")
     data = []
     headers = {
         'Authorization' : os.environ['SNYK_TOKEN'],

@@ -1,26 +1,28 @@
 import os
 import importlib
-import argparse
-
 from dotenv import load_dotenv
+import sys
+sys.path.append('../')
+from library import Library
 
-def main(filter = ''):
+def main():
+    lib = Library()
     for filename in os.listdir('.'):
         if filename.startswith('src') and filename.endswith('.py'):
             plugin = os.path.splitext(filename)[0]
-            print(f"Plugin : {plugin}")
+            lib.log("INFO","wrapper",f"Plugin : {plugin}")
 
             try:
                 module = importlib.import_module(plugin)
                 m = module.meta()
-                print(m['title'])
-                # Call the main function of the plugin dynamically
+                lib.log("INFO","wrapper",m['title'])
                 module.main()
             except ModuleNotFoundError:
-                print(f"Plugin '{plugin}' not found.")
+                lib.log("WARNING","wrapper",f"Plugin '{plugin}' not found.")
             except Exception as e:
-                print(f"Plugin '{plugin}' had an error {e}")
-
+                lib.log("ERROR","wrapper",f"Plugin '{plugin}' had an error {e}",True)
+    
+    lib.log("SUCCESS","wrapper","Completed with the collection process",True)
 if __name__=='__main__':
     load_dotenv()
     main()

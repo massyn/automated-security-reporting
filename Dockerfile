@@ -22,6 +22,7 @@ RUN pip3 install --no-cache-dir -r requirements.txt
 
 COPY 01-collectors  01-collectors
 COPY 02-metrics     02-metrics
+COPY 03-pipeline    03-pipeline
 
 # === Core stuff ===
 COPY main.sh .

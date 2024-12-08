@@ -12,3 +12,4 @@ duckdb
 boto3
 tabulate
 pyarrow
+supabase

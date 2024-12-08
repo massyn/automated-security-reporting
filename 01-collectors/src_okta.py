@@ -20,7 +20,7 @@ async def users(client,C):
     data = []
     users, resp, err = await client.list_users()
     if err:
-        C.log("ERROR",err)
+        C.lib.log("ERROR","src_okta",err)
         return False
     
     while True:

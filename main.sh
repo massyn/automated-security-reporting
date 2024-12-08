@@ -22,8 +22,6 @@ while true; do
   next_midnight=$(date -d "tomorrow 00:00:00" +%s)
   sleep_seconds=$((next_midnight - current_time))
 
-
-
   echo "Sleeping for $sleep_seconds seconds until midnight..."
   sleep $sleep_seconds
 done
