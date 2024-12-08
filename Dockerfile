@@ -13,7 +13,7 @@ RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-$(uname -m).zip" -o "aws
 
 # == web stuff
 RUN apt-get install lighttpd lighttpd-doc -y
-COPY 03-dashboard/build /var/www/html
+COPY 04-dashboard/build /var/www/html
 COPY lighttpd.conf /etc/lighttpd/lighttpd.conf
 
 # == install the main app
