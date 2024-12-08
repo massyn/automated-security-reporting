@@ -79,7 +79,7 @@ class Collector:
     def upload_to_s3(self,data,tag,target):
         key = self.lib.variables(tag,target)
         if key != '' and self.lib.config['STORE_AWS_S3_BUCKET'] != '':
-            self.lib.log("INFO",'upload_to_s3",f"Saving {len(data)} records for {tag} --> s3://{self.lib.config['STORE_AWS_S3_BUCKET']}/{key}")
+            self.lib.log("INFO","upload_to_s3",f"Saving {len(data)} records for {tag} --> s3://{self.lib.config['STORE_AWS_S3_BUCKET']}/{key}")
             try:
                 boto3.resource('s3').Bucket(self.lib.config['STORE_AWS_S3_BUCKET']).put_object(
                     ACL         = 'bucket-owner-full-control',
