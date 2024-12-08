@@ -25,6 +25,7 @@ COPY 02-metrics     02-metrics
 COPY 03-pipeline    03-pipeline
 
 # === Core stuff ===
+COPY library.py .
 COPY main.sh .
 COPY run.sh  .
 RUN chmod +x *.sh
