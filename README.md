@@ -67,6 +67,72 @@ graph LR
     classDef calc fill:#c6d8f9,stroke:#000,stroke-width:2px,color:#000;
 ```
 
+### Information flow
+
+```mermaid
+graph LR
+    source:::source
+    environment[environment variables]:::config
+    s3[(AWS S3)]:::data
+
+    subgraph collector
+        
+        collector.wrapper[wrapper]:::code
+        collector.src[src_*]:::code
+        collector.json[(*.json)]:::data
+
+        collector.src --> collector.json
+    end
+    source --> collector.src
+    environment --> collector.wrapper
+    collector.wrapper --> collector.src
+    collector.json -- backup --> s3
+
+    subgraph metrics
+        metrics.metrics[metrics]:::code
+        metrics.yaml[yaml]:::config
+        metrics.df[metrics.parquet]:::data
+    end
+    collector.json --> metrics.metrics
+    metrics.yaml --> metrics.metrics
+    metrics.metrics --> metrics.df
+
+    subgraph pipeline
+        pipeline.pipeline[pipeline]:::code
+
+        pipeline.data[(data)]:::data
+
+        pipeline.prepdashboard[Prepare Dashboard]:::code
+
+        pipeline.pipeline --> pipeline.data
+    end
+    metrics.df --> pipeline.pipeline
+    
+    pipeline.data --> pipeline.prepdashboard
+    pipeline.data -- backup --> s3
+    
+    port
+    subgraph dashboard
+        dashboard.data[(data)]:::data
+        dashboard.web[web]
+        dashboard.server[web server]:::code
+    end
+    dashboard.web --> dashboard.server
+    dashboard.server --> port
+    pipeline.prepdashboard --> dashboard.data
+    dashboard.data --> dashboard.web
+
+    pipeline.prepdashboard -- upload --> s3web[(AWS S3)]:::data
+
+    classDef source stroke:#0f0
+    classDef data stroke:#00f
+    classDef code stroke:#f00
+    classDef config stroke:#ff0
+
+    classDef dim fill:#f9c6c9,stroke:#000,stroke-width:2px,color:#000;
+    classDef calc fill:#c6d8f9,stroke:#000,stroke-width:2px,color:#000;
+```
+
 ## Quick start using Docker
 
 Grab your Crowdstrike API keys. (or if not Crowdstrike, any of the built-in [collectors](00-docs/collectors.md)).
