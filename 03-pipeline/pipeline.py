@@ -17,7 +17,7 @@ def update_summary(lib,parquet_file,new_df):
     # == delete the old metric - this dataframe should only contain the latest
     for metric_id in new_df['metric_id'].unique():
         try:
-            df = df[~((df['metric_id'] == metric_id) & (df['datestamp'] == self.datestamp))]
+            df = df[~((df['metric_id'] == metric_id) & (df['datestamp'] == lib.datestamp))]
         except Exception as e:
             lib.log("WARNING","write_summary",f"Unable to delete old metric - it probably doesn't exist yet: {e}")
 
@@ -155,7 +155,7 @@ if __name__=='__main__':
     load_dotenv()
     parser = argparse.ArgumentParser(description='Automated Security Reporting - Pipeline')
     parser.add_argument('-parquet',help='The path where the parquet files will be saved',default='../data')
-    parser.add_argument('-web',help='The path where the final csv files are written to',default='/var/www/html/public')
+    parser.add_argument('-web',help='The path where the final csv files are written to',default='/var/www/html')
     
     args = parser.parse_args()
 
