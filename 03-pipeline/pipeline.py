@@ -103,7 +103,6 @@ def write_summary_csv(lib,df,csv_file):
             lib.config['STORE_AWS_S3_WEB'],
             'summary.csv'
         )
-        
 
 def main(**KW):
     lib = Library()
@@ -136,7 +135,7 @@ def main(**KW):
     df_detail = update_detail(lib,f"{KW['parquet_path']}/detail.parquet",metrics_df)
     df_summary = update_summary(lib,f"{KW['parquet_path']}/summary.parquet",metrics_df)
 
-    # write the csv fiile for the dashboard
+    # write the csv file for the dashboard
     write_detail_csv(lib , df_detail , f"{KW['web']}/detail.csv")
     write_summary_csv(lib, df_summary, f"{KW['web']}/summary.csv")
 
