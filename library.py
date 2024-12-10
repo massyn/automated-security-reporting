@@ -13,6 +13,7 @@ class Library:
             "tenancy"               : os.environ.get('TENANCY','default'),
             "STORE_FILE"            : os.environ.get('STORE_FILE','../data/source/%TAG/%TENANCY.json'),
             "STORE_AWS_S3_BUCKET"   : os.environ.get('STORE_AWS_S3_BUCKET',''),
+            "STORE_AWS_S3_WEB"      : os.environ.get('STORE_AWS_S3_WEB',''),
             "STORE_AWS_S3_BACKUP"   : os.environ.get('STORE_AWS_S3_BACKUP','backup/%TAG/%TENANCY.json'),
             "STORE_AWS_S3_KEY"      : os.environ.get('STORE_AWS_S3_KEY',''),
             "STORE_DUCKDB"          : os.environ.get('STORE_DUCKDB',''),
