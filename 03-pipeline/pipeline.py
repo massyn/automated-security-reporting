@@ -81,26 +81,29 @@ def write_detail_csv(lib,df,csv_file):
                 df['resource'] = 'redacted'
             df.to_csv(csv_file, index=False)
             lib.log("SUCCESS","write_detail_csv",f"Wrote the csv file for the dashboard - {csv_file}")
-            lib.upload_to_s3(
-                csv_file,
-                lib.config['STORE_AWS_S3_WEB'],
-                'detail.csv'
-            )
         except:
             lib.log("ERROR","write_detail_csv",f"Could not write the csv file {csv_file}")
+        lib.upload_to_s3(
+            csv_file,
+            lib.config['STORE_AWS_S3_WEB'],
+            'detail.csv'
+        )
+        
 
 def write_summary_csv(lib,df,csv_file):
     if csv_file is not None:
         try:
             df.to_csv(csv_file, index=False)
             lib.log("SUCCESS","write_summary_csv",f"Wrote the csv file for the dashboard - {csv_file}")
-            lib.upload_to_s3(
-                csv_file,
-                lib.config['STORE_AWS_S3_WEB'],
-                'summary.csv'
-            )
         except:
             lib.log("ERROR","write_summary_csv",f"Could not write the csv file {csv_file}")
+            return
+        lib.upload_to_s3(
+            csv_file,
+            lib.config['STORE_AWS_S3_WEB'],
+            'summary.csv'
+        )
+        
 
 def main(**KW):
     lib = Library()
