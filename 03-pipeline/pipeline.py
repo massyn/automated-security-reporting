@@ -88,21 +88,44 @@ def write_detail_csv(lib,df,csv_file):
             lib.config['STORE_AWS_S3_WEB'],
             'detail.csv'
         )
-        
 
-def write_summary_csv(lib,df,csv_file):
+def write_summary_csv(lib, df, csv_file):
     if csv_file is not None:
         try:
-            df.to_csv(csv_file, index=False)
-            lib.log("SUCCESS","write_summary_csv",f"Wrote the csv file for the dashboard - {csv_file}")
-        except:
-            lib.log("ERROR","write_summary_csv",f"Could not write the csv file {csv_file}")
+            # Filter the DataFrame for the last 12 months
+            twelve_months_ago = pd.to_datetime("today") - pd.DateOffset(months=12)
+            df_filtered = df[df['datestamp'] >= twelve_months_ago]
+            
+            # Sort the DataFrame by datestamp
+            df_filtered = df_filtered.sort_values(by='datestamp')
+
+            # Determine the number of rows and the interval for spacing
+            num_records = len(df_filtered)
+            if num_records < 12:
+                # If there are fewer than 12 records, just use them all
+                selected_datestamps = df_filtered
+            else:
+                interval = num_records // 12  # Calculate interval to get 12 evenly spaced points
+
+                # Select the 12 evenly spaced datestamps
+                selected_datestamps = df_filtered.iloc[::interval][:12]  # Take every 'interval'-th row, limited to 12 records
+
+            # Filter the DataFrame to only include the selected datestamps
+            df_filtered = df_filtered[df_filtered['datestamp'].isin(selected_datestamps['datestamp'])]
+
+            # Write the filtered DataFrame to the CSV file
+            df_filtered.to_csv(csv_file, index=False)
+            lib.log("SUCCESS", "write_summary_csv", f"Wrote the csv file for the dashboard - {csv_file}")
+        except Exception as e:
+            lib.log("ERROR", "write_summary_csv", f"Could not write the csv file {csv_file}: {e}")
             return
+        
         lib.upload_to_s3(
             csv_file,
             lib.config['STORE_AWS_S3_WEB'],
             'summary.csv'
         )
+
 
 def main(**KW):
     lib = Library()
