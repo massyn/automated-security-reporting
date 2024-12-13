@@ -1,3 +1,4 @@
+/* Base styles for light mode */
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +6,54 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #ffffff;
+  color: #000000;
+  transition: background-color 0.3s, color 0.3s;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+code.dark-mode {
+  background-color: #1e1e1e;
+  color: #d4d4d4;
+}
+
+/* Navbar button styling */
+.navbar-dark .navbar-toggler {
+  color: #fff;
+}
+
+.navbar-toggle-button {
+  background: transparent;
+  border: none;
+  font-size: 1.5rem;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Button color changes based on mode */
+.button-toggle {
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: inherit;
+  transition: background-color 0.3s;
+}
+
+.button-toggle.light-mode {
+  color: #000;
+}
+
+.button-toggle.dark-mode {
+  color: #fff;
 }

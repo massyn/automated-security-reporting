@@ -1,30 +1,30 @@
-// Filename - "./components/Navbar.js
-
 import React from "react";
-import Container from 'react-bootstrap/Container';
-import Nav from 'react-bootstrap/Nav';
-import Navbar from 'react-bootstrap/Navbar';
-import NavDropdown from 'react-bootstrap/NavDropdown';
+import { Navbar, Nav, Container } from "react-bootstrap";
+import { FaSun, FaMoon } from "react-icons/fa"; // Import icons
 
-const Menu = () => {
+const Menu = ({ darkMode, setDarkMode }) => {
     return (
-          <Navbar bg="dark" data-bs-theme="dark">
-          <Container>
-            <Navbar.Brand href="#home">Cyber Metrics</Navbar.Brand>
-            <Navbar.Toggle aria-controls="basic-navbar-nav" />
-            <Navbar.Collapse id="basic-navbar-nav">
-              <Nav className="me-auto">
-                <Nav.Link href="/">Home</Nav.Link>
-                {/* <Nav.Link href="/categories">Categories</Nav.Link> */}
-                <Nav.Link href="/metrics">Metrics</Nav.Link>
-                <NavDropdown title="Docs" id="basic-nav-dropdown">
-                  <NavDropdown.Item href="/help">Help</NavDropdown.Item>
-                </NavDropdown>
-              </Nav>
-            </Navbar.Collapse>
-          </Container>
+        <Navbar bg={darkMode ? "dark" : "primary"} variant={darkMode ? "dark" : "dark"}>
+            <Container>
+                <Navbar.Brand href="/">Automated Security Reporting</Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="me-auto">
+                        <Nav.Link href="/">Overview</Nav.Link>
+                        <Nav.Link href="/metrics">Metrics</Nav.Link>
+                        <Nav.Link href="/help">Help</Nav.Link>
+                    </Nav>
+                    {/* Dark mode toggle button inside the navbar */}
+                    <button
+                        className={`button-toggle ${darkMode ? "dark-mode" : "dark-mode"}`}
+                        onClick={() => setDarkMode(!darkMode)}
+                    >
+                        {darkMode ? <FaSun /> : <FaMoon />}
+                    </button>
+                </Navbar.Collapse>
+            </Container>
         </Navbar>
-      );
+    );
 };
 
 export default Menu;

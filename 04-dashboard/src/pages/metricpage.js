@@ -3,8 +3,8 @@ import Filters from '../components/Filters';
 import { fetchAndExtractCSV } from '../utils/fetchData';
 import { useParams } from 'react-router-dom';
 import { weightedCalculation } from '../utils/weightedCalculations';
-import ChartLine from '../components/ChartLine';
 import '../style.css';
+import ComboTrend from '../components/ComboTrend';
 
 const MetricPage = () => {
     const [rawData, setRawData] = useState(null);
@@ -75,7 +75,7 @@ const MetricPage = () => {
             </div>
 
             <div className="col-md-9">
-                <ChartLine
+                <ComboTrend
                 id="orgCategories"
                 title={id}
                 description="Metric score"

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-
-import ChartLine from '../components/ChartLine';
+import ComboTrend from '../components/ComboTrend';
 import Filters from '../components/Filters';
 import { fetchAndExtractCSV } from '../utils/fetchData';
 import { weightedCalculation } from '../utils/weightedCalculations';
@@ -80,16 +79,16 @@ const Overview = () => {
         </div>
 
         <div className="col-md-9">
-          <ChartLine
+          <ComboTrend
               id="orgCategories"
               title="Organisational score over time"
               description="Organisational performance across all metrics."
               data={chart1_filteredData}
               x="datestamp"
               y={[ "value" , "slo" , "slo_min"]}
-              custom={ { "value" : { "label" : "Score", "showMark" : true } , "slo" : { "color" : "green", "label" : "Target"}, "slo_min" : { "color" : "yellow" , label: "SLO min"} }}
+              custom={ { "value" : { "label" : "Score", "type" : "bar", } , "slo" : { "color" : "green", "label" : "Target"}, "slo_min" : { "color" : "yellow" , label: "SLO min"} }}
           />
-          <ChartLine
+          <ComboTrend
               id="BUCategories"
               title="Business Unit score over time"
               description="View the scores for all business units in one multi-line graph."
