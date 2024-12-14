@@ -93,7 +93,8 @@ def write_summary_csv(lib, df, csv_file):
     if csv_file is not None:
         try:
             # Filter the DataFrame for the last 12 months
-            twelve_months_ago = pd.to_datetime("today") - pd.DateOffset(months=12)
+            df['datestamp'] = pd.to_datetime(df['datestamp'])
+            twelve_months_ago = pd.Timestamp.now() - pd.DateOffset(months=12)
             df_filtered = df[df['datestamp'] >= twelve_months_ago]
             
             # Sort the DataFrame by datestamp
