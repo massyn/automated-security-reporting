@@ -5,7 +5,7 @@ import sys
 sys.path.append('../')
 from library import Library
 import pandas as pd
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 
 def run_sql_on_postgres(file_path):
     # Load PostgreSQL credentials from environment variables
@@ -34,7 +34,7 @@ def run_sql_on_postgres(file_path):
                     # Skip empty statements
                     statement = statement.strip()
                     if statement:
-                        connection.execute(statement)
+                        connection.execute(text(statement))
             
             print("SQL script executed successfully.")
     
