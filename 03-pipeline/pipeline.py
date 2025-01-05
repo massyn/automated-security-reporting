@@ -7,9 +7,33 @@ from library import Library
 import pandas as pd
 from sqlalchemy import create_engine
 
-import os
-from sqlalchemy import create_engine
-
+def run_sql_on_postgres(file_path):
+    # Load PostgreSQL credentials from environment variables
+    DB_HOST = os.getenv("POSTGRES_HOST")
+    DB_NAME = os.getenv("POSTGRES_DATABASE")
+    DB_PORT = os.getenv("POSTGRES_PORT", "5432")  # Default to 5432 if not set
+    DB_USER = os.getenv("POSTGRES_USER")
+    DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+    
+    # Check that all required environment variables are set
+    if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
+        raise ValueError("One or more PostgreSQL environment variables are not set.")
+    
+    try:
+        # Create the SQLAlchemy engine
+        engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+        
+        # Connect to the database
+        with engine.connect() as connection:
+            # Read and execute the SQL file
+            with open(file_path, 'r') as sql_file:
+                sql_statements = sql_file.read()
+                connection.execute(sql_statements)
+            print("SQL script executed successfully.")
+    
+    except Exception as e:
+        print(f"Error executing SQL file: {e}")
+    
 def upload_to_postgres(df, table_name, if_exists="replace"):
     # Load PostgreSQL credentials from environment variables
     DB_HOST = os.getenv("POSTGRES_HOST")
@@ -169,6 +193,7 @@ def main(**KW):
 
     # == upload to postgres
     upload_to_postgres(metrics_df, "detail")
+    run_sql_on_postgres("postgres_summary.sql")
 
     # == find the latest files
     lib.download_from_s3(
