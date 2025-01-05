@@ -5,6 +5,33 @@ import sys
 sys.path.append('../')
 from library import Library
 import pandas as pd
+from sqlalchemy import create_engine
+
+import os
+from sqlalchemy import create_engine
+
+def upload_to_postgres(df, table_name, if_exists="replace"):
+    # Load PostgreSQL credentials from environment variables
+    DB_HOST = os.getenv("POSTGRES_HOST")
+    DB_NAME = os.getenv("POSTGRES_DATABASE")
+    DB_PORT = os.getenv("POSTGRES_PORT", "5432")  # Default to 5432 if not set
+    DB_USER = os.getenv("POSTGRES_USER")
+    DB_PASSWORD = os.getenv("POSTGRES_PASSWORD")
+    
+    # Check that all required environment variables are set
+    if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
+        raise ValueError("One or more PostgreSQL environment variables are not set.")
+    
+    # Create a SQLAlchemy engine
+    engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+    
+    try:
+        # Write the DataFrame to the PostgreSQL database
+        df.to_sql(table_name, engine, if_exists=if_exists, index=False)
+        print(f"Data successfully uploaded to the '{table_name}' table.")
+    except Exception as e:
+        print(f"Error uploading data to PostgreSQL: {e}")
+        raise
 
 def update_summary(lib,parquet_file,new_df):
     # == load the parquet file
@@ -127,7 +154,6 @@ def write_summary_csv(lib, df, csv_file):
             'summary.csv'
         )
 
-
 def main(**KW):
     lib = Library()
     if KW.get('parquet_path'):
@@ -140,6 +166,9 @@ def main(**KW):
     
     # == get the df from metrics
     metrics_df = pd.read_parquet(f"{KW['parquet_path']}/metrics.parquet")
+
+    # == upload to postgres
+    upload_to_postgres(metrics_df, "detail")
 
     # == find the latest files
     lib.download_from_s3(
