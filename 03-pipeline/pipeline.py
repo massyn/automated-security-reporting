@@ -28,7 +28,14 @@ def run_sql_on_postgres(file_path):
             # Read and execute the SQL file
             with open(file_path, 'r') as sql_file:
                 sql_statements = sql_file.read()
-                connection.execute(sql_statements)
+                
+                # Split the SQL script into individual statements
+                for statement in sql_statements.split(";"):
+                    # Skip empty statements
+                    statement = statement.strip()
+                    if statement:
+                        connection.execute(statement)
+            
             print("SQL script executed successfully.")
     
     except Exception as e:
