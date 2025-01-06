@@ -7,7 +7,7 @@ from library import Library
 import pandas as pd
 from sqlalchemy import create_engine, text
 
-def run_sql_on_postgres(file_path):
+def run_sql_on_postgres(lib,file_path):
     # Load PostgreSQL credentials from environment variables
     DB_HOST = os.getenv("POSTGRES_HOST")
     DB_NAME = os.getenv("POSTGRES_DATABASE")
@@ -17,11 +17,12 @@ def run_sql_on_postgres(file_path):
     
     # Check that all required environment variables are set
     if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
+        lib.log("WARNING","run_sql_on_postgres","One or more PostgreSQL environment variables are not set.")
         raise ValueError("One or more PostgreSQL environment variables are not set.")
     
     try:
         # Create the SQLAlchemy engine
-        engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
+        engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}",isolation_level="AUTOCOMMIT")
         
         # Connect to the database
         with engine.connect() as connection:
@@ -31,17 +32,14 @@ def run_sql_on_postgres(file_path):
                 
                 # Split the SQL script into individual statements
                 for statement in sql_statements.split(";"):
-                    # Skip empty statements
                     statement = statement.strip()
-                    if statement:
-                        connection.execute(text(statement))
-            
-            print("SQL script executed successfully.")
+                    connection.execute(text(statement))
+            lib.log("SUCCESS","run_sql_on_postgres","SQL script executed successfully.")
     
     except Exception as e:
-        print(f"Error executing SQL file: {e}")
+        lib.log("ERROR","run_sql_on_postgres",f"Error executing SQL file: {e}")
     
-def upload_to_postgres(df, table_name, if_exists="replace"):
+def upload_to_postgres(lib,df, table_name, if_exists="replace"):
     # Load PostgreSQL credentials from environment variables
     DB_HOST = os.getenv("POSTGRES_HOST")
     DB_NAME = os.getenv("POSTGRES_DATABASE")
@@ -51,6 +49,7 @@ def upload_to_postgres(df, table_name, if_exists="replace"):
     
     # Check that all required environment variables are set
     if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
+        lib.log("WARNING","upload_to_postgres","One or more PostgreSQL environment variables are not set.")
         raise ValueError("One or more PostgreSQL environment variables are not set.")
     
     # Create a SQLAlchemy engine
@@ -59,9 +58,9 @@ def upload_to_postgres(df, table_name, if_exists="replace"):
     try:
         # Write the DataFrame to the PostgreSQL database
         df.to_sql(table_name, engine, if_exists=if_exists, index=False)
-        print(f"Data successfully uploaded to the '{table_name}' table.")
+        lib.log("SUCCESS","upload_to_postgres",f"Data successfully uploaded to the '{table_name}' table.")
     except Exception as e:
-        print(f"Error uploading data to PostgreSQL: {e}")
+        lib.log("ERROR","upload_to_postgres",f"Error uploading data to PostgreSQL: {e}")
         raise
 
 def update_summary(lib,parquet_file,new_df):
@@ -199,8 +198,8 @@ def main(**KW):
     metrics_df = pd.read_parquet(f"{KW['parquet_path']}/metrics.parquet")
 
     # == upload to postgres
-    upload_to_postgres(metrics_df, "detail")
-    run_sql_on_postgres("postgres_summary.sql")
+    upload_to_postgres(lib,metrics_df, "detail")
+    run_sql_on_postgres(lib,"postgres_summary.sql")
 
     # == find the latest files
     lib.download_from_s3(
