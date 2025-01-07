@@ -37,7 +37,7 @@ def run_sql_on_postgres(lib,file_path):
             lib.log("SUCCESS","run_sql_on_postgres","SQL script executed successfully.")
     
     except Exception as e:
-        lib.log("ERROR","run_sql_on_postgres",f"Error executing SQL file: {e}")
+        lib.log("ERROR","run_sql_on_postgres",f"Error executing SQL file: {e}",abort=True)
     
 def upload_to_postgres(lib,df, table_name, if_exists="replace"):
     # Load PostgreSQL credentials from environment variables
