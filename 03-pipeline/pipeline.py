@@ -33,7 +33,8 @@ def run_sql_on_postgres(lib,file_path):
                 # Split the SQL script into individual statements
                 for statement in sql_statements.split(";"):
                     statement = statement.strip()
-                    connection.execute(text(statement))
+                    if statement:
+                        connection.execute(text(statement))
             lib.log("SUCCESS","run_sql_on_postgres","SQL script executed successfully.")
     
     except Exception as e:
