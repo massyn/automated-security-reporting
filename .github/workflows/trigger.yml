@@ -1,7 +1,7 @@
 on:
   workflow_dispatch:
 jobs:
-build:
+  trigger:
     runs-on: ubuntu-latest
     steps:
     - name: Check me out
