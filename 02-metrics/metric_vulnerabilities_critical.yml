@@ -1,5 +1,5 @@
 metric_id: vulnerabilities_critical
-title: "Systems with Critical and High vulnerabilities"
+title: "Systems without Critical and High vulnerabilities"
 description: |
   Ensure that all systems do not have any urgent vulnerabilities that can impact the risk.
 category: "Vulnerability Management"

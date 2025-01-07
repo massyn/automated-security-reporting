@@ -90,6 +90,8 @@ class Metric:
         if not success:
             return pd.DataFrame()
         df['datestamp'] = self.datestamp
+        df['datestamp'] = pd.to_datetime(df['datestamp'])
+
         # == Merge the resource dimensions - TODO
         df['business_unit'] = 'undefined'
         df['team'] = 'undefined'
