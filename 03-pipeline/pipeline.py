@@ -18,7 +18,7 @@ def run_sql_on_postgres(lib,file_path):
     # Check that all required environment variables are set
     if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
         lib.log("WARNING","run_sql_on_postgres","One or more PostgreSQL environment variables are not set.")
-        raise ValueError("One or more PostgreSQL environment variables are not set.")
+        return
     
     try:
         # Create the SQLAlchemy engine
@@ -37,7 +37,7 @@ def run_sql_on_postgres(lib,file_path):
             lib.log("SUCCESS","run_sql_on_postgres","SQL script executed successfully.")
     
     except Exception as e:
-        lib.log("ERROR","run_sql_on_postgres",f"Error executing SQL file: {e}",abort=True)
+        lib.log("ERROR","run_sql_on_postgres",f"Error executing SQL file: {e}",True)
     
 def upload_to_postgres(lib,df, table_name, if_exists="replace"):
     # Load PostgreSQL credentials from environment variables
@@ -50,7 +50,7 @@ def upload_to_postgres(lib,df, table_name, if_exists="replace"):
     # Check that all required environment variables are set
     if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
         lib.log("WARNING","upload_to_postgres","One or more PostgreSQL environment variables are not set.")
-        raise ValueError("One or more PostgreSQL environment variables are not set.")
+        return
     
     # Create a SQLAlchemy engine
     engine = create_engine(f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}")
