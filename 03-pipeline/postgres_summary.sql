@@ -20,7 +20,7 @@ DELETE FROM summary
 WHERE (metric_id, datestamp) IN (
     SELECT DISTINCT
         d.metric_id,
-        d.datestamp
+        CAST(d.datestamp as date) datestamp
     FROM
         detail d
 );
