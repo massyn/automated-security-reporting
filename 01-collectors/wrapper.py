@@ -7,6 +7,7 @@ from library import Library
 
 def main():
     lib = Library()
+    lib.log("INFO","wrapper","Starting the collection process",True)
     for filename in os.listdir('.'):
         if filename.startswith('src') and filename.endswith('.py'):
             plugin = os.path.splitext(filename)[0]

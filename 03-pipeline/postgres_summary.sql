@@ -20,7 +20,7 @@ DELETE FROM summary
 WHERE (metric_id, datestamp) IN (
     SELECT DISTINCT
         d.metric_id,
-        CAST(d.datestamp as date) datestamp
+        CAST(d.datestamp as date) as datestamp
     FROM
         detail d
 );
@@ -43,7 +43,7 @@ INSERT INTO summary (
 SELECT
     d.metric_id,
     d.title,
-    d.datestamp,
+    CAST(d.datestamp as date) as datestamp,
     d.slo,
     d.slo_min,
     d.weight,
