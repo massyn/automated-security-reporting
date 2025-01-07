@@ -89,7 +89,9 @@ selected_dates AS (
     SELECT
         datestamp
     FROM row_numbered_dates
-    WHERE MOD(row_num - 1, GREATEST(1, total_rows / 12)) = 0
+    WHERE row_num = total_rows -- Always include the latest date
+       OR row_num = 1 -- Always include the earliest date
+       OR row_num % (CEIL(total_rows / 12.0)) = 0 -- Evenly distribute other dates
     ORDER BY datestamp
     LIMIT 12
 )
