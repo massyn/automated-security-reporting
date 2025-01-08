@@ -1,11 +1,11 @@
-metric_id: vulnerabilities_critical
-title: "Systems without Critical and High vulnerabilities"
+metric_id: vulnerabilities_explot_patchable
+title: "Systems without exploitable vulnerabilities"
 description: |
-  Ensure that all systems do not have any urgent vulnerabilities that can impact the risk.
+  Ensure that all systems do not have any explotable vulnerabilities that can be patched.
 category: "Vulnerability Management"
 slo: 0.95
 slo_min: 0.80
-weight: 0.2
+weight: 0.8
 query: |
     SELECT
         host.hostname AS resource,
@@ -21,5 +21,6 @@ query: |
       {{ ref('crowdstrike_vulnerabilities') }} AS cve
     ON 
       host.device_id = cve.aid  
-      AND cve.severity IN ('HIGH', 'CRITICAL')
       AND cve.status IN ('open', 'reopen')
+      AND coalesce(cve.cve.remediation_level = 'O', false)
+      AND coalesce(cve.cve.exploit_status > 0, false)

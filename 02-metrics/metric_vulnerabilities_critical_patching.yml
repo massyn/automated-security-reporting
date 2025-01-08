@@ -5,23 +5,23 @@ description: |
 category: "Vulnerability Management"
 slo: 0.95
 slo_min: 0.80
-weight: 0.8
+weight: 0.2
 query: |
-  SELECT
-      host.hostname AS resource,
-      'host' as resource_type,
-      CASE 
-          WHEN cve.aid IS NOT NULL THEN 1
-          ELSE 0
-      END AS compliance,
-      '' AS detail
-  FROM 
-      {{ ref('crowdstrike_hosts') }} AS host
-  LEFT JOIN 
-      {{ ref('crowdstrike_vulnerabilities') }} AS cve
-  ON 
-      host.device_id = cve.aid
-      AND cve.severity IN ('HIGH', 'CRITICAL')
-      AND cve.status IN ('open', 'reopen')
-      AND cast(cve.published_date as date) < CURRENT_DATE - INTERVAL '14 DAY'
-      AND cast(cve.created_timestamp as date) < CURRENT_DATE - INTERVAL '30 DAY';
+    SELECT
+        host.hostname AS resource,
+        'host' as resource_type,
+        CASE 
+            WHEN cve.aid IS NULL THEN 1
+            ELSE 0
+        END AS compliance,
+        '' AS detail
+    FROM 
+        {{ ref('crowdstrike_hosts') }} AS host
+    LEFT JOIN 
+        {{ ref('crowdstrike_vulnerabilities') }} AS cve
+    ON 
+        host.device_id = cve.aid
+        AND cve.severity IN ('HIGH', 'CRITICAL')
+        AND cve.status IN ('open', 'reopen')
+        AND cast(cve.published_date as date) < CURRENT_DATE - INTERVAL '14 DAY'
+        AND cast(cve.created_timestamp as date) < CURRENT_DATE - INTERVAL '30 DAY';

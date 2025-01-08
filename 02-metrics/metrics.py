@@ -63,6 +63,8 @@ class Metric:
             # Execute query
             df = duckdb.query(template).df()
             self.lib.log("SUCCESS","metric_run",f"Retrieved {len(df)} records")
+            if args.dryrun:
+                print(df)
         except duckdb.Error as e:
             self.lib.log("ERROR","metric_run",f"Failed to execute query: {e}")
             print(template)
