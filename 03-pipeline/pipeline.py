@@ -89,6 +89,7 @@ def update_summary(lib,parquet_file,new_df):
     df = pd.concat([df,new], ignore_index=True)
 
     # == write it back to disk
+    df['datestamp'] = pd.to_datetime(df['datestamp'])
     df.to_parquet(parquet_file)
     lib.log("SUCCESS","write_summary",f"Updated summary - {parquet_file}")
     return df
@@ -126,6 +127,8 @@ def update_detail(lib,parquet_file,new_df):
         df = pd.concat([df,new_df], ignore_index=True)
 
         # == write it back to disk
+        # Convert datestamp column to datetime
+        df['datestamp'] = pd.to_datetime(df['datestamp'])
         df.to_parquet(parquet_file)
         lib.log("SUCCESS","write_detail",f"Updated detail - {parquet_file}")
         return df
