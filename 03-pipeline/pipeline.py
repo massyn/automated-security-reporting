@@ -185,6 +185,24 @@ def write_summary_csv(lib, df, csv_file):
             'summary.csv'
         )
 
+def summary_alert(lib,df):
+    new = df.groupby(['datestamp','metric_id','title','category','slo','slo_min']).agg({
+        'compliance' : ['sum','count']
+    }).reset_index()
+    new.columns = ['datestamp','metric_id','title','category','slo','slo_min', 'totalok', 'total']
+    new['score'] = new.apply(lambda row: row['totalok'] / row['total'], axis=1)
+    new['icon'] = new.apply(lambda row: '🟢' if row['score'] >= row['slo'] else ('🟡' if row['score'] >= row['slo_min'] else '🔴'), axis=1)
+
+    # Filter the DataFrame to only show rows where score < slo
+    #alert_df = new[new['score'] < new['slo']]
+
+    message = "Automated Security Metric results:\n"
+    for index, row in new.iterrows():
+        message += f"{row['icon']} {row['title']} - {row['score']:.0%} ({row['total'] - row['totalok']})\n"
+
+    if len(new) > 0:
+        lib.log("INFO","summary_alert",message,True)
+
 def main(**KW):
     lib = Library()
     if KW.get('parquet_path'):
@@ -235,6 +253,9 @@ def main(**KW):
         lib.config['STORE_AWS_S3_BUCKET'],                      # bucket
         f"{lib.config['STORE_AWS_S3_HISTORY']}/summary.parquet"  # key
     )
+
+    # == send a slack alert 
+    summary_alert(lib,metrics_df)
 
     lib.log("SUCCESS","main","All done")
 
