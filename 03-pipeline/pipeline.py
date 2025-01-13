@@ -167,10 +167,15 @@ def write_summary_csv(lib, df, csv_file):
                 # If there are fewer than 12 records, just use them all
                 selected_datestamps = df_filtered
             else:
-                interval = num_records // 12  # Calculate interval to get 12 evenly spaced points
+                # Always include the first and last items
+                selected_datestamps = df_filtered.iloc[[0, -1]]
 
-                # Select the 12 evenly spaced datestamps
-                selected_datestamps = df_filtered.iloc[::interval][:12]  # Take every 'interval'-th row, limited to 12 records
+                # Calculate the interval for the remaining items
+                interval = (num_records - 2) // 10  # 10 remaining items to select
+
+                # Select the remaining evenly spaced datestamps
+                if interval > 0:
+                    selected_datestamps = pd.concat([selected_datestamps, df_filtered.iloc[1:-1:interval][:10]])
 
             # Filter the DataFrame to only include the selected datestamps
             df_filtered = df_filtered[df_filtered['datestamp'].isin(selected_datestamps['datestamp'])]
