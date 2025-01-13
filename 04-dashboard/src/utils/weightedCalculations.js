@@ -43,17 +43,23 @@ export const weightedCalculation = (data, filters = {}, dimension = null) => {
         Object.entries(dimensions).forEach(([itemDimension, metrics]) => {
             let weightSum = 0.0;
             let scoreSum = 0.0;
+            let sloSum = 0.0;
+            let sloMinSum = 0.0;
+            let metricCount = 0;
 
             Object.values(metrics).forEach(metric => {
                 const score = metric.totalok / metric.total;
                 weightSum += metric.weight;
                 scoreSum += score * metric.weight;
+                sloSum += metric.slo;
+                sloMinSum += metric.slo_min;
+                metricCount += 1;
             });
 
             layer2[datestamp][itemDimension] = {
                 value: weightSum > 0 ? scoreSum / weightSum : 0,
-                slo: metrics[Object.keys(metrics)[0]].slo,
-                slo_min: metrics[Object.keys(metrics)[0]].slo_min
+                slo: metricCount > 0 ? sloSum / metricCount : 0,
+                slo_min: metricCount > 0 ? sloMinSum / metricCount : 0,
             };
         });
     });
